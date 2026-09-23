@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+node_modules/
+.next/
+dist/
+*.joblib
+*.pkl
+ai-model/checkpoints/*
+ai-model/exported/*
+!ai-model/checkpoints/.gitkeep
+!ai-model/exported/.gitkeep
