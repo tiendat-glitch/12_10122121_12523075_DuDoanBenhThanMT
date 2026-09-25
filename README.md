@@ -203,7 +203,7 @@ Compose còn truyền `PORT` cho backend/AI, `SCHEMA_PATH=/app/model_artifacts/s
 ## 11. Demo online (địa chỉ App, địa chỉ AI Service/docs — cập nhật mỗi khi đổi)
 
 <!-- PUBLIC_URLS_START -->
-- App: https://voters-capacity-florida-ste.trycloudflare.com
+- App: https://travelling-agencies-thus-includes.trycloudflare.com
 - AI Service: https://converter-acknowledged-proven-eds.trycloudflare.com
 - Cập nhật cấu hình: 2026-09-25T07:08:39.806403+00:00
 <!-- PUBLIC_URLS_END -->
