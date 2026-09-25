@@ -1,0 +1,4 @@
+# Reuse the root stack, root .env and artifacts.
+include:
+  - path: ../../docker-compose.yml
+    env_file: ../../.env
