@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Nhập các chỉ số xét nghiệm và thông tin sức khỏe để thử mô hình phân loại bệnh thận mạn tính.">
+<meta name="color-scheme" content="light dark">
+<title>Dự đoán bệnh thận mạn tính</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap site-header">
+<p class="eyebrow">HỌC MÁY CƠ BẢN · NHÓM 12</p>
+<h1>Dự đoán bệnh thận mạn tính</h1>
+<p class="lede">Nhập thông tin sức khỏe, mô hình Logistic Regression sẽ đưa ra kết quả phân loại tham khảo.</p>
+</header>
+<main class="wrap">
+<div class="layout">
+<section class="card" aria-labelledby="form-title">
+<div class="section-heading"><h2 id="form-title">Thông tin đầu vào</h2><span class="badge">24 đặc trưng</span></div>
+<p class="muted">Điền đủ các trường bên dưới hoặc dùng dữ liệu mẫu để trải nghiệm. Khoảng giá trị hiển thị là phạm vi dữ liệu của mô hình, không phải ngưỡng sức khỏe bình thường.</p>
+<form id="predict-form">
+<div id="fields"></div>
+<div class="actions"><button id="sample" class="btn secondary" type="button" disabled>Điền dữ liệu mẫu</button><button id="submit" class="btn primary" type="submit" disabled>Dự đoán</button></div>
+<p id="status" class="muted" role="status">Đang tải cấu hình…</p>
+</form>
+<noscript><p class="notice">Vui lòng bật JavaScript để nhập dữ liệu và sử dụng mô hình.</p></noscript>
+</section>
+<aside class="result-column">
+<section class="card result-card" aria-labelledby="result-title">
+<h2 id="result-title">Kết quả dự đoán</h2>
+<div aria-live="polite" aria-atomic="true">
+<p id="prediction-label" class="prediction-label">Chưa có kết quả</p>
+<p id="probability" class="probability">—</p>
+<p class="muted">Xác suất mô hình gán cho lớp <strong>ckd</strong> (bệnh thận mạn tính).</p>
+<div class="probability-track" aria-hidden="true"><div id="probability-fill"></div></div>
+<p id="result-caption" class="muted">Điền thông tin và bấm Dự đoán để xem kết quả.</p>
+<p id="stale-notice" class="notice" hidden>Dữ liệu đã thay đổi. Bấm Dự đoán để cập nhật kết quả.</p>
+</div>
+<p class="notice">Chỉ minh họa học thuật. Kết quả và xác suất của mô hình không thay thế chẩn đoán của bác sĩ.</p>
+<details id="calculation" class="breakdown"><summary>Xem cách tính</summary>
+<p id="calculation-placeholder" class="muted">Bấm Dự đoán để xem phép tính cho thông tin bạn đã gửi.</p>
+<div id="calculation-content" hidden>
+<p class="muted">1. Chuẩn hóa biến số theo trung bình và độ lệch chuẩn đã học: x′ = (x − μ) / σ. Biến phân loại được mã hóa one-hot thành 0 hoặc 1.</p>
+<p class="muted">2. Nhân từng giá trị đã xử lý với hệ số tương ứng, rồi cộng hệ số chặn.</p>
+<pre id="calculation-formula"></pre>
+<p class="muted">Đóng góp dương làm tăng điểm hướng về CKD; đóng góp âm làm giảm điểm. Đây là đóng góp vào log-odds, không phải phần trăm hay quan hệ nhân quả. Hệ số được quy về lớp CKD để khớp xác suất hiển thị.</p>
+<div class="table-scroll calculation-table"><table><caption>Giá trị × hệ số = đóng góp (làm tròn 5 chữ số)</caption><thead><tr><th scope="col">Đặc trưng sau xử lý</th><th scope="col">Giá trị x′</th><th scope="col">Hệ số w</th><th scope="col">Đóng góp</th></tr></thead><tbody id="calculation-terms"></tbody></table></div>
+<p class="muted small">Các dòng được sắp theo độ lớn đóng góp. Tổng và xác suất tính bằng độ chính xác đầy đủ trước khi làm tròn. Cách tính ứng với lần dự đoán gần nhất, không tự cập nhật khi sửa ô nhập.</p>
+</div>
+<p class="muted">3. Chuyển tổng điểm z thành xác suất: P(CKD) = 1 / (1 + exp(−z)).</p>
+<p class="muted">Pipeline đã huấn luyện điền giá trị thiếu, chuẩn hóa biến số, mã hóa biến phân loại rồi chạy Logistic Regression. Biểu mẫu này yêu cầu đủ 24 trường trước khi gửi.</p>
+<p class="muted">Logistic Regression chuyển tổ hợp đặc trưng đã xử lý thành xác suất. Đây không phải phép cộng trực tiếp các chỉ số xét nghiệm ban đầu.</p>
+<p class="muted"><strong>ckd:</strong> lớp bệnh thận mạn tính.<br><strong>notckd:</strong> lớp không mắc bệnh thận mạn tính trong bộ dữ liệu.</p>
+</details>
+<details id="prediction-details" class="breakdown"><summary>Chi tiết lần dự đoán</summary><pre id="result">Chưa có dữ liệu.</pre><div class="table-scroll"><table><caption>Thông tin đã gửi ở lần dự đoán này</caption><thead><tr><th scope="col">Đặc trưng</th><th scope="col">Giá trị</th></tr></thead><tbody id="submitted-values"></tbody></table></div></details>
+</section>
+<section class="card model-card" aria-labelledby="model-title">
+<h2 id="model-title">Thông tin mô hình</h2>
+<p id="model-info" class="muted">Đang tải…</p>
+<div id="metrics" class="metrics"></div>
+<p class="muted small">Metric trên tập đánh giá của dự án; không đại diện độ chính xác trên mọi bệnh nhân.</p>
+</section>
+</aside>
+</div>
+
+</main>
+<footer class="wrap site-footer"><p>Dự đoán bệnh thận mạn tính · Nhóm 12</p><p class="muted">Dữ liệu CKD · Logistic Regression · Sản phẩm học tập</p></footer>
+<script src="app.js"></script>
+</body>
+</html>
