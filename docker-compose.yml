@@ -1,43 +1,72 @@
 services:
-  api:
+  ai-service:
     build:
-      context: ./App/backend
-    env_file: [.env]
+      context: ./ai-models
+      dockerfile: service/Dockerfile
     environment:
-      MONGODB_URI: mongodb://mongodb:27017
-      MODEL_PATH: /app/app/models/artifacts
-    ports: ["8000:8000"]
+      MODEL_DIR: /app/models
+      PORT: ${AI_PORT}
+      LOG_LEVEL: ${LOG_LEVEL}
+    ports: ["${AI_HOST_PORT}:${AI_PORT}"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:'+os.environ['PORT']+'/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  backend:
+    build: ./app/backend
+    environment:
+      PORT: ${BACKEND_PORT}
+      AI_SERVICE_URL: ${AI_SERVICE_URL}
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      REQUEST_TIMEOUT_SECONDS: ${REQUEST_TIMEOUT_SECONDS}
+      SCHEMA_PATH: /app/model_artifacts/schema.json
+    ports: ["${BACKEND_HOST_PORT}:${BACKEND_PORT}"]
+    volumes: ["./ai-models/models:/app/model_artifacts:ro"]
     depends_on:
+      ai-service:
+        condition: service_healthy
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 12s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    build: ./app/frontend
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
+      BACKEND_UPSTREAM: ${BACKEND_UPSTREAM}
+      API_URL: ${API_URL}
+      NGINX_ENVSUBST_FILTER: "^(FRONTEND_PORT|BACKEND_UPSTREAM|API_URL)$"
+    ports: ["${FRONTEND_HOST_PORT}:${FRONTEND_PORT}"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$$FRONTEND_PORT/health"]
       interval: 15s
       timeout: 5s
       retries: 5
-
-  frontend:
-    build:
-      context: ./App/frontend
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
-    ports: ["3000:3000"]
-    depends_on:
-      api:
-        condition: service_healthy
+    restart: unless-stopped
 
   mongodb:
     image: mongo:7
     restart: unless-stopped
     volumes: ["mongodb_data:/data/db"]
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "if (!db.runCommand({ping:1}).ok) quit(1)"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
   mongodb_data:
-

@@ -7,8 +7,7 @@ node_modules/
 .next/
 dist/
 *.joblib
+!ai-models/models/model.joblib
 *.pkl
-ai-model/checkpoints/*
-ai-model/exported/*
-!ai-model/checkpoints/.gitkeep
-!ai-model/exported/.gitkeep
+.ipynb_checkpoints/
+ai-models/data/extracted/

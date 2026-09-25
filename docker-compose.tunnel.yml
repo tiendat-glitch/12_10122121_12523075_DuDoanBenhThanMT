@@ -1,0 +1,16 @@
+# Optional public demo. Combine with the root Compose file; never run alone.
+# Quick Tunnel URLs can change whenever these connectors restart.
+services:
+  tunnel-app:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "--url", "http://frontend:${FRONTEND_PORT}"]
+    depends_on:
+      frontend:
+        condition: service_healthy
+
+  tunnel-ai:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "--url", "http://ai-service:${AI_PORT}"]
+    depends_on:
+      ai-service:
+        condition: service_healthy
