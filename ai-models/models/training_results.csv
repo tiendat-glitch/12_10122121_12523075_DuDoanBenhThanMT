@@ -1,0 +1,6 @@
+model,best_params,cv_f1,cv_f1_std,cv_train_f1,train_f1,train_seconds,predict_ms_per_sample_train,model_size_bytes,cv_train_validation_gap
+logistic_regression,"{""model__C"": 1, ""model__class_weight"": null}",1.0,0.0,1.0,1.0,4.737241009000172,0.13719358124930636,2665,0.0
+random_forest,"{""model__class_weight"": ""balanced"", ""model__max_depth"": null, ""model__min_samples_split"": 2, ""model__n_estimators"": 100}",0.9975308641975309,0.004938271604938293,1.0,1.0,11.365858572999969,0.14077449375022866,61050,0.0024691358024691024
+svc,"{""model__C"": 0.1, ""model__class_weight"": null, ""model__gamma"": ""scale"", ""model__kernel"": ""linear""}",0.9974683544303797,0.005063291139240489,0.9993769470404985,1.0,9.944898270000067,0.02614162499980921,5342,0.0019085926101187756
+knn,"{""model__n_neighbors"": 5, ""model__p"": 1, ""model__weights"": ""distance""}",0.9742915312535565,0.008318089330067979,1.0,1.0,8.21190379099994,0.07116346874980195,17625,0.025708468746443502
+dummy,{},0.7692307692307693,0.0,0.7692307692307693,0.7692307692307693,5.799941782000133,0.05290819687502335,2206,0.0

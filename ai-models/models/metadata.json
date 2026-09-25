@@ -1,0 +1,63 @@
+{
+  "model_name": "logistic_regression",
+  "model_version": "1.0.0",
+  "task": "binary_classification",
+  "target": "classification",
+  "positive_label": "ckd",
+  "primary_metric": "f1",
+  "selection_rule": "F1 within 0.01, then recall, CV stability, latency and size",
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "cv_f1": 1.0,
+    "cv_f1_std": 0.0,
+    "train_f1": 1.0,
+    "train_test_f1_gap": 0.0
+  },
+  "confusion_matrix": {
+    "true_positives": 50,
+    "false_negatives": 0,
+    "false_positives": 0,
+    "true_negatives": 30
+  },
+  "trained_at_utc": "2026-09-24T14:46:16.530650+00:00",
+  "random_state": 42,
+  "features": [
+    "age",
+    "bp",
+    "sg",
+    "al",
+    "su",
+    "bgr",
+    "bu",
+    "sc",
+    "sod",
+    "pot",
+    "hemo",
+    "pcv",
+    "wc",
+    "rc",
+    "rbc",
+    "pc",
+    "pcc",
+    "ba",
+    "htn",
+    "dm",
+    "cad",
+    "appet",
+    "pe",
+    "ane"
+  ],
+  "library_versions": {
+    "python": "3.13.15",
+    "pandas": "2.2.3",
+    "numpy": "2.1.3",
+    "scikit-learn": "1.6.1",
+    "joblib": "1.6.0"
+  },
+  "model_size_bytes": 2681
+}

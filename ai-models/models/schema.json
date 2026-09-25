@@ -1,0 +1,165 @@
+{
+  "task_type": "binary_classification",
+  "target": "classification",
+  "positive_label": "ckd",
+  "target_labels": [
+    "ckd",
+    "notckd"
+  ],
+  "features": [
+    "age",
+    "bp",
+    "sg",
+    "al",
+    "su",
+    "bgr",
+    "bu",
+    "sc",
+    "sod",
+    "pot",
+    "hemo",
+    "pcv",
+    "wc",
+    "rc",
+    "rbc",
+    "pc",
+    "pcc",
+    "ba",
+    "htn",
+    "dm",
+    "cad",
+    "appet",
+    "pe",
+    "ane"
+  ],
+  "numeric_features": [
+    "age",
+    "bp",
+    "sg",
+    "al",
+    "su",
+    "bgr",
+    "bu",
+    "sc",
+    "sod",
+    "pot",
+    "hemo",
+    "pcv",
+    "wc",
+    "rc"
+  ],
+  "categorical_features": [
+    "rbc",
+    "pc",
+    "pcc",
+    "ba",
+    "htn",
+    "dm",
+    "cad",
+    "appet",
+    "pe",
+    "ane"
+  ],
+  "allowed_categories": {
+    "rbc": [
+      "abnormal",
+      "normal"
+    ],
+    "pc": [
+      "abnormal",
+      "normal"
+    ],
+    "pcc": [
+      "notpresent",
+      "present"
+    ],
+    "ba": [
+      "notpresent",
+      "present"
+    ],
+    "htn": [
+      "no",
+      "yes"
+    ],
+    "dm": [
+      "no",
+      "yes"
+    ],
+    "cad": [
+      "no",
+      "yes"
+    ],
+    "appet": [
+      "good",
+      "poor"
+    ],
+    "pe": [
+      "no",
+      "yes"
+    ],
+    "ane": [
+      "no",
+      "yes"
+    ]
+  },
+  "numeric_ranges": {
+    "age": {
+      "min": 2.0,
+      "max": 90.0
+    },
+    "bp": {
+      "min": 50.0,
+      "max": 180.0
+    },
+    "sg": {
+      "min": 1.005,
+      "max": 1.025
+    },
+    "al": {
+      "min": 0.0,
+      "max": 5.0
+    },
+    "su": {
+      "min": 0.0,
+      "max": 5.0
+    },
+    "bgr": {
+      "min": 22.0,
+      "max": 490.0
+    },
+    "bu": {
+      "min": 1.5,
+      "max": 391.0
+    },
+    "sc": {
+      "min": 0.4,
+      "max": 76.0
+    },
+    "sod": {
+      "min": 4.5,
+      "max": 163.0
+    },
+    "pot": {
+      "min": 2.5,
+      "max": 47.0
+    },
+    "hemo": {
+      "min": 3.1,
+      "max": 17.8
+    },
+    "pcv": {
+      "min": 9.0,
+      "max": 54.0
+    },
+    "wc": {
+      "min": 2200.0,
+      "max": 26400.0
+    },
+    "rc": {
+      "min": 2.1,
+      "max": 8.0
+    }
+  },
+  "test_size": 0.2,
+  "random_state": 42
+}
