@@ -1,0 +1,62 @@
+[
+  {
+    "model":"logistic_regression",
+    "best_params":"{\"model__C\": 1, \"model__class_weight\": null}",
+    "cv_f1":1.0,
+    "cv_f1_std":0.0,
+    "cv_train_f1":1.0,
+    "train_f1":1.0,
+    "train_seconds":4.737241009,
+    "predict_ms_per_sample_train":0.1371935812,
+    "model_size_bytes":2665,
+    "cv_train_validation_gap":0.0
+  },
+  {
+    "model":"random_forest",
+    "best_params":"{\"model__class_weight\": \"balanced\", \"model__max_depth\": null, \"model__min_samples_split\": 2, \"model__n_estimators\": 100}",
+    "cv_f1":0.9975308642,
+    "cv_f1_std":0.0049382716,
+    "cv_train_f1":1.0,
+    "train_f1":1.0,
+    "train_seconds":11.365858573,
+    "predict_ms_per_sample_train":0.1407744938,
+    "model_size_bytes":61050,
+    "cv_train_validation_gap":0.0024691358
+  },
+  {
+    "model":"svc",
+    "best_params":"{\"model__C\": 0.1, \"model__class_weight\": null, \"model__gamma\": \"scale\", \"model__kernel\": \"linear\"}",
+    "cv_f1":0.9974683544,
+    "cv_f1_std":0.0050632911,
+    "cv_train_f1":0.999376947,
+    "train_f1":1.0,
+    "train_seconds":9.94489827,
+    "predict_ms_per_sample_train":0.026141625,
+    "model_size_bytes":5342,
+    "cv_train_validation_gap":0.0019085926
+  },
+  {
+    "model":"knn",
+    "best_params":"{\"model__n_neighbors\": 5, \"model__p\": 1, \"model__weights\": \"distance\"}",
+    "cv_f1":0.9742915313,
+    "cv_f1_std":0.0083180893,
+    "cv_train_f1":1.0,
+    "train_f1":1.0,
+    "train_seconds":8.211903791,
+    "predict_ms_per_sample_train":0.0711634687,
+    "model_size_bytes":17625,
+    "cv_train_validation_gap":0.0257084687
+  },
+  {
+    "model":"dummy",
+    "best_params":"{}",
+    "cv_f1":0.7692307692,
+    "cv_f1_std":0.0,
+    "cv_train_f1":0.7692307692,
+    "train_f1":0.7692307692,
+    "train_seconds":5.799941782,
+    "predict_ms_per_sample_train":0.0529081969,
+    "model_size_bytes":2206,
+    "cv_train_validation_gap":0.0
+  }
+]
