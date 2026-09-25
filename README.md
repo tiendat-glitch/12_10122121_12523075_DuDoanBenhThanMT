@@ -2,6 +2,11 @@
 
 ## 1. Thành viên (họ tên, MSSV, phần việc)
 
+| Họ và tên | MSSV | Phần việc |
+|---|---:|---|
+| Vũ Tiến Đạt | 10122121 | Phân tích khám phá dữ liệu và tiền xử lý; bổ sung dataset và data.md; xây dựng mã nguồn preprocess/train/evaluate ; phát triển frontend và đóng gói frontend bằng Docker ; cập nhật dependencies và URL ứng dụng . |
+| Nguyễn Hồng Sơn | 12523075 | Huấn luyện, đánh giá và xuất artifact mô hình ; xây dựng AI Model API và kiểm thử ; xây dựng Backend API, validation, lưu lịch sử và kiểm thử ; bổ sung hình EDA/đánh giá ; cấu hình Docker Compose, triển khai và tunnel . |
+
 ## 2. Bài toán (mô tả, loại bài toán, cột mục tiêu, ý nghĩa thực tế)
 
 Dự án xây dựng ứng dụng phân loại bệnh thận mạn tính từ 24 đặc trưng trong bộ dữ liệu Chronic Kidney Disease. Đây là bài toán **phân loại nhị phân**, với cột mục tiêu `classification`:
