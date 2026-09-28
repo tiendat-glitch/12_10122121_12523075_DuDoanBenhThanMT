@@ -205,6 +205,19 @@ Compose còn truyền `PORT` cho backend/AI, `SCHEMA_PATH=/app/model_artifacts/s
 
 ## 10. Triển khai (cách public: deploy/tunnel, các bước, cách cập nhật khi đổi link)
 
+Hệ thống chạy bằng Docker Compose trên máy cá nhân và được public bằng Cloudflare Quick Tunnel:
+- App: tunnel tới frontend; các request `/api` được Nginx chuyển tới backend.
+- AI Service: sử dụng tunnel riêng tới FastAPI.
+
+Các bước triển khai:
+1. Mở Docker Desktop.
+2. Khởi động hệ thống bằng Docker Compose.
+3. Khởi động tunnel cho App và AI Service.
+4. Lấy URL `trycloudflare.com` mới từ log của `tunnel-app` và `tunnel-ai`.
+5. Kiểm tra App, Backend và AI Service hoạt động qua URL public.
+
+Khi URL tunnel thay đổi, chạy `scripts/update_endpoints.py` để cập nhật `PUBLIC_APP_URL`, `PUBLIC_AI_URL` và `CORS_ORIGINS`, sau đó kiểm tra lại hệ thống public và commit/push thay đổi.
+
 ## 11. Demo online (địa chỉ App, địa chỉ AI Service/docs — cập nhật mỗi khi đổi)
 
 <!-- PUBLIC_URLS_START -->
