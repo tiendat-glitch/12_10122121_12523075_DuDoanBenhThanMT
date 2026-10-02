@@ -211,23 +211,95 @@ Hệ thống chạy bằng Docker Compose trên máy cá nhân và được publ
 
 Các bước triển khai:
 1. Mở Docker Desktop.
-2. Khởi động hệ thống bằng Docker Compose.
-3. Khởi động tunnel cho App và AI Service.
-4. Lấy URL `trycloudflare.com` mới từ log của `tunnel-app` và `tunnel-ai`.
-5. Kiểm tra App, Backend và AI Service hoạt động qua URL public.
+2. Tại thư mục gốc repo, khởi động cả ứng dụng và hai tunnel bằng **cả hai file Compose**:
 
-Khi URL tunnel thay đổi, chạy `scripts/update_endpoints.py` để cập nhật `PUBLIC_APP_URL`, `PUBLIC_AI_URL` và `CORS_ORIGINS`, sau đó kiểm tra lại hệ thống public và commit/push thay đổi.
+   ```powershell
+   docker compose -f .\docker-compose.yml -f .\docker-compose.tunnel.yml up --build
+   ```
+
+   Chỉ chạy `docker compose up --build` sẽ không nạp `docker-compose.tunnel.yml`, nên hai tunnel sẽ không được tạo.
+3. Lấy URL `trycloudflare.com` mới từ log của `tunnel-app` và `tunnel-ai`. Có thể xem log trong cửa sổ PowerShell khác:
+
+   ```powershell
+   docker compose -f .\docker-compose.yml -f .\docker-compose.tunnel.yml logs -f tunnel-app tunnel-ai
+   ```
+
+4. Kiểm tra App, Backend và AI Service hoạt động qua URL public; thử một dự đoán và kiểm tra log/request ID.
+
+Khi URL tunnel thay đổi, cập nhật giá trị URL public và cấu hình CORS cần thiết trong `.env`, cập nhật mục 11 và ghi lại URL cũ/mới cùng thời điểm tại mục 12. Sau đó kiểm tra lại hệ thống public. Dừng các service bằng `Ctrl+C` ở cửa sổ đang chạy Compose.
 
 ## 11. Demo online (địa chỉ App, địa chỉ AI Service/docs — cập nhật mỗi khi đổi)
 
 <!-- PUBLIC_URLS_START -->
-- App: https://travelling-agencies-thus-includes.trycloudflare.com
-- AI Service: https://converter-acknowledged-proven-eds.trycloudflare.com
-- Cập nhật cấu hình: 2026-09-25T07:08:39.806403+00:00
+- App (URL được ghi nhận gần nhất): https://travelling-agencies-thus-includes.trycloudflare.com
+- AI Service (URL được ghi nhận gần nhất): https://converter-acknowledged-proven-eds.trycloudflare.com
+- AI API docs: https://converter-acknowledged-proven-eds.trycloudflare.com/docs
+- Thời điểm ghi nhận trong cấu hình: 2026-09-25 07:08:39 UTC
 <!-- PUBLIC_URLS_END -->
+
+> Đây là Cloudflare Quick Tunnel nên URL có thể đổi khi tunnel được khởi động lại. Các URL trên là lần ghi nhận gần nhất trong repository, **không bảo đảm hiện vẫn truy cập được**. Trước khi gửi link hoặc demo, khởi động tunnel bằng lệnh ở mục 10, kiểm tra URL mới trong log `tunnel-app`/`tunnel-ai`, rồi cập nhật khối này và mục 12.
 
 ## 12. Nhật ký đổi cổng/tunnel (thời điểm đổi, địa chỉ cũ → mới)
 
+| Thời điểm (UTC) | Thành phần | Địa chỉ cũ | Địa chỉ mới | Ghi chú |
+|---|---|---|---|---|
+| 2026-09-25 07:08:39 | App | Không lưu trong repository | `https://travelling-agencies-thus-includes.trycloudflare.com` | URL hiện có trong cấu hình/README tại thời điểm đó. |
+| 2026-09-25 07:08:39 | AI Service | Không lưu trong repository | `https://converter-acknowledged-proven-eds.trycloudflare.com` | URL hiện có trong cấu hình/README tại thời điểm đó. |
+
+Khi Quick Tunnel cấp URL khác, bổ sung một dòng cho **mỗi thành phần** với thời điểm thực tế, URL cũ và mới; đồng thời cập nhật `.env`/CORS nếu cần, mục 11 và chạy smoke test qua địa chỉ public.
 ## 13. Kết quả kiểm thử hiệu năng
 
+### Đo thời gian suy luận model
+
+Các số dưới đây lấy từ `ai-models/models/evaluation_results.csv`. Đây là thời gian gọi model dự đoán trong quy trình đánh giá notebook, tính trung bình trên một mẫu của tập test; **không phải** thời gian phản hồi end-to-end của website/API và cũng không phải load test đồng thời.
+
+| Model | Thời gian suy luận trung bình (ms/mẫu) | Kích thước artifact |
+|---|---:|---:|
+| Dummy baseline | 0,161 | 2.206 B |
+| Logistic Regression (được đóng gói) | 0,193 | 2.665 B |
+| SVC | 0,219 | 5.342 B |
+| KNN | 0,402 | 17.625 B |
+| Random Forest | 0,822 | 61.050 B |
+
+Các phép đo phụ thuộc môi trường và cỡ batch; không dùng chúng để khẳng định tốc độ trên máy chủ public.
+
+### Kiểm thử chức năng và giao diện
+
+Backend có **6/6 test PASS**, AI Service có **17 test PASS**, smoke test toàn hệ thống có **27 PASS – 0 FAIL – 0 BLOCKED**. Browser test trên viewport 390 px hoàn thành không tràn ngang/page error; đã kiểm tra form 24 trường, dự đoán, history và cách tính. Các kết quả này là kết quả được ghi trong báo cáo của nhóm.
+
+### Load test toàn luồng
+
+Báo cáo ghi nhận load generator có warm-up trước mỗi lượt và gửi request qua `http://localhost:3000/api/predict`, bao gồm luồng FE → BE → AI → DB. Kết quả:
+
+| Người dùng đồng thời | Thời lượng (s) | Requests | Throughput (RPS) | p50 (ms) | p95 (ms) | Lỗi |
+|---:|---:|---:|---:|---:|---:|---:|
+| 10 | 60,343 | 1.196 | 19,82 | 504,73 | 710,93 | 0/1.196 (0%) |
+| 20 | 60,403 | 1.081 | 17,90 | 1.123,78 | 1.592,10 | 0/1.081 (0%) |
+
+Ở hai mức đã thử, p95 dưới 2 giây và tỷ lệ lỗi dưới 1%, phù hợp với mục tiêu tham khảo trong hướng dẫn môn học. Đây là benchmark **localhost trong môi trường thử nghiệm**, không phải benchmark qua Cloudflare tunnel/cloud và không phải SLA. Chỉ mới kiểm thử đến 20 người dùng; chưa xác định tải tối đa. RPS có thể thay đổi theo tài nguyên nền và trạng thái máy.
+
+
 ## 14. Hạn chế và hướng phát triển
+
+### Hạn chế hiện tại
+
+- **Quy mô và tính đại diện dữ liệu:** dataset có 400 mẫu từ một nguồn công khai; kết quả trên split hiện tại không chứng minh khả năng tổng quát hóa sang bệnh viện, quần thể hoặc quy trình xét nghiệm khác.
+- **License:** `ai-models/data/DATA.md` ghi license của dataset trên Kaggle là **Unknown**. Cần xác minh điều kiện sử dụng/phân phối trước khi công bố lại dữ liệu hoặc dùng ngoài mục đích học tập.
+- **Đánh giá model:** pipeline và GridSearchCV giúp fit bước tiền xử lý trong từng fold, nhưng script hiện tính metric các ứng viên trên holdout rồi chọn model dựa trên kết quả đó. Do holdout đã tham gia lựa chọn, các metric test có thể lạc quan; cần chọn model bằng CV trên train và chỉ chấm test độc lập một lần.
+- **Ứng dụng không phải thiết bị y tế:** nhãn và xác suất chỉ minh họa đầu ra mô hình trên dataset, không phải chẩn đoán, tư vấn hoặc quyết định điều trị.
+- **Schema range:** min/max trong `schema.json` mô tả phạm vi quan sát của dữ liệu, không phải ngưỡng sinh lý bình thường; input ngoài phạm vi hiện bị từ chối.
+- **Giải thích dự đoán:** phần “Xem cách tính” phân rã log-odds của Logistic Regression; không chứng minh quan hệ nhân quả và không thay thế giải thích lâm sàng.
+- **Vận hành public:** Cloudflare Quick Tunnel có thể đổi hostname hoặc ngắt khi máy/container dừng. Các URL ở mục 11 là lần ghi nhận gần nhất, cần xác minh ngay trước demo.
+- **Hiệu năng tải:** đã có load test localhost ở 10 và 20 người dùng đồng thời, nhưng chưa có phép đo trên public tunnel/cloud hoặc xác định capacity tối đa. Raw JSON được báo cáo tham chiếu hiện chưa có trong repository.
+- **An toàn và quyền riêng tư:** báo cáo ghi hệ thống chưa có đầy đủ authentication, phân quyền, mã hóa và audit log; không dùng với dữ liệu bệnh nhân thật hoặc public như dịch vụ y tế.
+- **Vận hành production:** chưa có monitoring production, CI/CD và cơ chế rollback.
+
+### Hướng phát triển
+
+1. Xác minh license và nguồn gốc dữ liệu; bổ sung tập dữ liệu lớn hơn, đa nguồn và được phép sử dụng.
+2. Thiết kế đánh giá không rò rỉ thông tin: stratified cross-validation chỉ trên train để chọn model/siêu tham số; khóa lựa chọn trước khi đánh giá test; bổ sung external validation và khoảng tin cậy.
+3. Đánh giá các ngưỡng phân loại, calibration xác suất, độ nhạy/độ đặc hiệu và hiệu năng theo nhóm dữ liệu; chỉ chọn ngưỡng với tư vấn chuyên môn.
+4. Lưu các file raw load test trong repository; lặp lại benchmark có kiểm soát và chạy thêm qua public endpoint, đồng thời kiểm tra timeout hoặc MongoDB/AI Service không sẵn sàng.
+5. Bổ sung xác thực, phân quyền, mã hóa phù hợp, chính sách lưu trữ và audit log trước khi xử lý dữ liệu nhạy cảm.
+6. Bổ sung monitoring, CI/CD và quy trình rollback có kiểm thử.
+7. Cải thiện độ ổn định triển khai bằng hostname cố định hoặc nền tảng deploy phù hợp; tự động cập nhật tài liệu tunnel và kiểm tra health sau mỗi lần đổi URL.
