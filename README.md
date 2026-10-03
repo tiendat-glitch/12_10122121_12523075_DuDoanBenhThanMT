@@ -244,7 +244,8 @@ Khi URL tunnel thay đổi, cập nhật giá trị URL public và cấu hình C
 | Thời điểm (UTC) | Thành phần | Địa chỉ cũ | Địa chỉ mới | Ghi chú |
 |---|---|---|---|---|
 | 2026-09-25 07:08:39 | App | Không lưu trong repository | `https://travelling-agencies-thus-includes.trycloudflare.com` | URL hiện có trong cấu hình/README tại thời điểm đó. |
-| 2026-09-25 07:08:39 | AI Service | Không lưu trong repository | `https://converter-acknowledged-proven-eds.trycloudflare.com` | URL hiện có trong cấu hình/README tại thời điểm đó. |
+| 2026-09-25 07:08:39 | AI Service | Không lưu trong repository | `https://converter-acknowledged-proven-eds.trycloudflare.com` | 
+| 2026-10-03 07:30:39 | App | Không lưu trong repository | `https://jpg-obvious-supplements-harder.trycloudflare.com/` | URL hiện có trong cấu hình/README tại thời điểm đó. | 
 
 Khi Quick Tunnel cấp URL khác, bổ sung một dòng cho **mỗi thành phần** với thời điểm thực tế, URL cũ và mới; đồng thời cập nhật `.env`/CORS nếu cần, mục 11 và chạy smoke test qua địa chỉ public.
 ## 13. Kết quả kiểm thử hiệu năng
